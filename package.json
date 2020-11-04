@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js",
+    "test" : "loadtest -c 10 --rps 200 -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWZhMmRkZWI2MTU2NGQxNDhjODM2ZmY4Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjA0NTA5NDIzLCJleHAiOjE2MDQ1OTU4MjN9.MMscocEf6zndcl7x7TNCSUoO7zyTinFyqT3Db-RY1Vw\"  http://localhost:3000/api/auth/user"
   },
   "author": "",
   "license": "ISC",
