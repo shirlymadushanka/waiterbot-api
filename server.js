@@ -20,7 +20,7 @@ const startApp = async () => {
         });
         console.log(`[+]    successfully connected to the database.`);
         // listen on port
-        server.listen(PORT, ()=> console.log(`[+]    server is started on port ${PORT}.`));
+        server.listen(PORT || 3000 , ()=> console.log(`[+]    server is started on port ${PORT || 3000}.`));
         
     } catch (err) {
         console.log(`[-]    unable to connect with the database \n ${err}`);

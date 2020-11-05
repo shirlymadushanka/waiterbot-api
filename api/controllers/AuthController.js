@@ -8,7 +8,6 @@ const User = require('../models/User');
 const { SECRET } = require('../config')
 
 const userRegister = async (userData, role, req, res, next) => {
-
     try {
         // validate user data.
         const result = await userInputSchema.validate(userData);
@@ -24,8 +23,7 @@ const userRegister = async (userData, role, req, res, next) => {
         const newUser = User({
             ...result.value,
             password,
-            role,
-            uuid : req.headers.uuid
+            role
         });
         await newUser.save();
         // send response
@@ -76,7 +74,7 @@ const userLogin = async (authCredintials, role,req,res,next) => {
         );
 
         let data = {
-            username: user.first_name,
+            first_name: user.first_name,
             role: user.role,
             token: token,
             expiresIn: "24"
@@ -130,8 +128,9 @@ const validateMobile = async mobile => {
 const serializedUser = user => {
     return {
         _id: user._id,
-        name: user.first_name,
-        username: user.last_name,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        mobile : user.mobile,
         role : user.role
     }
 }
