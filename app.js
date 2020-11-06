@@ -2,7 +2,9 @@ require('dotenv').config({path:__dirname + '/.env'})
 const express = require('express');
 const bp = require('body-parser');
 const checkAuth = require('./api/middlewares/checkAuth');
-const checkRole =  require('./api/middlewares/checkRole')
+const checkRole =  require('./api/middlewares/checkRole');
+const { PORT } = require('./api/config');
+const db = require('./db/index')
 const app = express();
 
 
@@ -10,6 +12,13 @@ const app = express();
 app.use(bp.json())
 
 // adding routes of the application
+
+app.use('/api', (req,res,next) => {
+    res.status(200).json({
+        message : "Welcome to waiterbot-api",
+        success : true
+    })
+});
 
 app.use('/api/auth',require('./api/routes/auth.routes'));
 app.use('/api/admins',checkAuth,checkRole(["admin"]),require('./api/routes/admin.routes'));
@@ -33,5 +42,12 @@ app.use((err,req,res,next)=>{
     });
 });
 
-
-module.exports = app;
+// connect to the database and listen on port
+console.log("connecting to mongodb...");
+db.dbconnect().then(() => {
+    app.listen(PORT, () => {
+        console.log(`server started at port ${PORT}`);
+    })
+}).catch(() => {
+    console.log(`error connectiong to the database`);
+})
