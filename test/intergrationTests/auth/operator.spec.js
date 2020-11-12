@@ -6,10 +6,10 @@ const request = require('supertest');
 const app = require('../../../app.js');
 const conn = require('../../../db/index.js')
 
-describe('POST /api/auth/owner_register', () => {
+describe('POST /api/auth/operator_register', () => {
   it('first_name required case passed.', (done) => {
-    request(app).post('/api/auth/owner_register')
-      .send({ last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726168" })
+    request(app).post('/api/auth/operator_register')
+      .send({ last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726166" })
       .then((res) => {
         const body = res.body;
         expect(body.success).to.equal(false);
@@ -19,8 +19,8 @@ describe('POST /api/auth/owner_register', () => {
   });
 
   it('last_name required case passed.', (done) => {
-    request(app).post('/api/auth/owner_register')
-      .send({ last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726168" })
+    request(app).post('/api/auth/operator_register')
+      .send({ last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726166" })
       .then((res) => {
         const body = res.body;
         expect(body.success).to.equal(false);
@@ -31,7 +31,7 @@ describe('POST /api/auth/owner_register', () => {
 
 
   it('mobile required case passed.', (done) => {
-    request(app).post('/api/auth/owner_register')
+    request(app).post('/api/auth/operator_register')
       .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', password: "@fjsklfD2" })
       .then((res) => {
         const body = res.body;
@@ -42,8 +42,8 @@ describe('POST /api/auth/owner_register', () => {
   });
 
   it('password required case passed.', (done) => {
-    request(app).post('/api/auth/owner_register')
-      .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', mobile: "0717726168" })
+    request(app).post('/api/auth/operator_register')
+      .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', mobile: "0717726166" })
       .then((res) => {
         const body = res.body;
         expect(body.success).to.equal(false);
@@ -52,9 +52,9 @@ describe('POST /api/auth/owner_register', () => {
       .catch((err) => done(err));
   });
 
-  it('Owner registration passed.', (done) => {
-    request(app).post('/api/auth/owner_register')
-      .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726168" })
+  it('Operator registration passed.', (done) => {
+    request(app).post('/api/auth/operator_register')
+      .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726166" })
       .then((res) => {
         expect(res.body.success).to.equal(true);
         expect(res.body.data.first_name).to.equal('sfdsfsdf');
@@ -64,8 +64,8 @@ describe('POST /api/auth/owner_register', () => {
   });
 
   it('register with exiting mobile case passed.', (done) => {
-    request(app).post('/api/auth/owner_register')
-      .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726168" })
+    request(app).post('/api/auth/operator_register')
+      .send({ first_name: 'sfdsfsdf', last_name: 'fsdfsfsdf', password: "@fjsklfD2", mobile: "0717726166" })
       .then((res) => {
         expect(res.body.success).to.equal(false);
         done();
@@ -75,9 +75,9 @@ describe('POST /api/auth/owner_register', () => {
 });
 
 
-describe('POST /api/auth/owner_login', () => {
+describe('POST /api/auth/operator_login', () => {
   it('mobile required case passed.', (done) => {
-    request(app).post('/api/auth/owner_login')
+    request(app).post('/api/auth/operator_login')
       .send({ password: "@fjsklfD2" })
       .then((res) => {
         const body = res.body;
@@ -88,7 +88,7 @@ describe('POST /api/auth/owner_login', () => {
   });
 
   it('password required case passed.', (done) => {
-    request(app).post('/api/auth/owner_login')
+    request(app).post('/api/auth/operator_login')
       .send({ mobile: "+94717726169" })
       .then((res) => {
         const body = res.body;
@@ -98,11 +98,11 @@ describe('POST /api/auth/owner_login', () => {
       .catch((err) => done(err));
   });
 
-  it('Owner login passed.', (done) => {
-    request(app).post('/api/auth/owner_login').send({ password: "@fjsklfD2", mobile: "0717726168" })
+  it('Operator login passed.', (done) => {
+    request(app).post('/api/auth/operator_login').send({ password: "@fjsklfD2", mobile: "0717726166" })
       .then((res) => {
         expect(res.body.success).to.equal(true);
-        expect(res.body.role).to.equal('owner');
+        expect(res.body.role).to.equal('operator');
         expect(res.body).to.have.property('token')
         done();
       })
@@ -110,8 +110,8 @@ describe('POST /api/auth/owner_login', () => {
   });
 
   it('Invalid credintials case passed.', (done) => {
-    request(app).post('/api/auth/owner_login')
-      .send({ password: "@fjsklfD2fds", mobile: "+94717726169" })
+    request(app).post('/api/auth/operator_login')
+      .send({ password: "@fjsklfD2fds", mobile: "0717726169" })
       .then((res) => {
         expect(res.body.success).to.equal(false);
         done();

@@ -16,15 +16,24 @@ router.post('/admin_login',async (req,res,next)=>{
 });
 
 
-// teacher registration
+// owner registration
 router.post('/owner_register', async (req, res,next) => {
     await userRegister(req.body, "owner",req,res,next);
 });
-// teacher login
+// owner login
 router.post('/owner_login',async (req,res,next)=>{
     await userLogin(req.body, "owner",req,res,next);
 });
 
+// operator registration
+router.post('/operator_register', async (req, res,next) => {
+    await userRegister(req.body, "operator",req,res,next);
+});
+
+// operator login
+router.post('/operator_login',async (req,res,next)=>{
+    await userLogin(req.body, "operator",req,res,next);
+});
 
 // Client registration
 router.post('/client_register', async (req, res,next) => {

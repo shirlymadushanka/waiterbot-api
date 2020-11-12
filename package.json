@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "test": "mocha --recursive --exit --timeout 6000"
   },
   "author": "",
@@ -19,8 +19,8 @@
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^8.2.1",
-    "mockgoose": "^8.0.4",
     "mongoose": "^5.10.11",
+    "morgan": "^1.10.0",
     "supertest": "^6.0.1"
   },
   "devDependencies": {
