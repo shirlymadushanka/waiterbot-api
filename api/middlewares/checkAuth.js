@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
 const createErrors = require('http-errors');
-const User = require('../models/User')
+const UserBase = require('../models/UserBase');
 
 module.exports = async (req, res, next) => {
     try {
@@ -14,7 +14,7 @@ module.exports = async (req, res, next) => {
         // set request body
         req.user = decodedPayload;
         // get user form the database
-        const user = await User.findOne({ _id : decodedPayload.user_id });
+        const user = await UserBase.findOne({ _id : decodedPayload.user_id });
         if(!user) throw createErrors.Unauthorized("Unauthorized! Please login to proceed.");
         
         next();

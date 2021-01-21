@@ -1,30 +1,50 @@
-const createHttpError = require('http-errors');
 const createErrors = require('http-errors');
 const bcrypt =  require('bcrypt');
 const jwt  =  require('jsonwebtoken');
+const { SECRET } = require('../config');
+const Owner = require('../models/Owner');
+const Admin = require('../models/Admin');
+const Operator = require('../models/Operator');
+const Client = require('../models/Client');
+const UserBase = require('../models/UserBase');
 
-const {authSchema, userInputSchema } = require('../utils/Validator')
-const User = require('../models/User');
-const { SECRET } = require('../config')
-
-const userRegister = async (userData, role, req, res, next) => {
+const userRegister = async (role, req, res, next) => {
     try {
-        // validate user data.
-        const result = await userInputSchema.validate(userData);
-        
-        if(result.error) throw createErrors.UnprocessableEntity(result.error.message);
         // validate mobile
-        let mobileExists = await validateMobile(result.value.mobile);
+        let mobileExists = await validateMobile(req.body.mobile);
         if(mobileExists) throw createErrors.Conflict(`User already registed using this mobile number`)
         // hash the password
-        const password = await bcrypt.hash(result.value.password, 12);
+        const password = await bcrypt.hash(req.body.password, 12);
 
         // Create new user
-        const newUser = User({
-            ...result.value,
-            password,
-            role
-        });
+        let newUser;
+
+        // if user is owner, create owner data
+        if(role==="admin"){
+            newUser = Admin({
+                ...req.body,
+                password,
+                role
+            });
+        } else if (role === "owner"){
+            newUser = Owner({
+                ...req.body,
+                password,
+                role
+            });
+        }else if (role === "operator"){
+            newUser = Operator({
+                ...req.body,
+                password,
+                role
+            });
+        }else {
+            newUser = Client({
+                ...req.body,
+                password,
+                role
+            });
+        }
         await newUser.save();
         // send response
         res.status(201).json({
@@ -36,21 +56,13 @@ const userRegister = async (userData, role, req, res, next) => {
         // if some error is caught. pass them to the next middleware
         next(error);
     }
-   
-
-    
 }
 
-const userLogin = async (authCredintials, role,req,res,next) => {
+const userLogin = async (role,req,res,next) => {
 
     try {
-        
-        // extract username and password from user creadintials
-        const result = await authSchema.validate(authCredintials);
-        // it there is an error throw error
-        if(result.error) throw createErrors.UnprocessableEntity(result.error.message);
         // check username in the database
-        const user = await User.findOne({ mobile : result.value.mobile });
+        const user = await UserBase.findOne({ mobile : req.body.mobile });
 
         if (!user) throw createErrors.Unauthorized("Invalid mobile or password.");
 
@@ -60,7 +72,7 @@ const userLogin = async (authCredintials, role,req,res,next) => {
         }
 
         // check password
-        let isMatch = await bcrypt.compare(result.value.password, user.password);
+        let isMatch = await bcrypt.compare(req.body.password, user.password);
         if(!isMatch) throw createErrors.Unauthorized("Invalid mobile or password.");
         
         // sign in the user and send a token
@@ -75,15 +87,16 @@ const userLogin = async (authCredintials, role,req,res,next) => {
 
         let data = {
             first_name: user.first_name,
-            role: user.role,
-            token: token,
-            expiresIn: "24"
+            last_name : user.last_name,
+            role: user.role
         }
 
         res.status(200).json({
-            ...data,
+            data,
             message: `Login successful for the user ${user.mobile}`,
-            success: true
+            success: true,
+            token: token,
+            expiresIn: "24"
         });
 
     } catch (err) {
@@ -98,7 +111,7 @@ const userLogin = async (authCredintials, role,req,res,next) => {
 const getAuthUser = async (req,res,next) => {
 
     try {
-        const user = await User.findOne({ _id : req.user.user_id });
+        const user = await UserBase.findOne({ _id : req.user.user_id });
         let data = {
             first_name : user.first_name,
             last_name : user.last_name,
@@ -120,7 +133,7 @@ const getAuthUser = async (req,res,next) => {
 
 // validate a given mobile
 const validateMobile = async mobile => {
-    let user = await User.findOne({ mobile });
+    let user = await UserBase.findOne({ mobile });
     return user ? true : false;
 }
 

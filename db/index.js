@@ -1,41 +1,59 @@
 const mongoose = require("mongoose");
-const { DB,DB_TEST } = require('../api/config');
+const { MongoMemoryServer } = require("mongodb-memory-server");
+const { DB } = require('../api/config');
 
+// genaral db connection function
 function dbconnect() {
     return new Promise((resolve, reject) => {
-        if (process.env.NODE_ENV === 'test') {
-            mongoose.connect(DB_TEST, {
-                useFindAndModify: true,
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
-                useCreateIndex: true,
-            })
-                .then((res, err) => {
-                    res.connection.dropDatabase();
-                    console.log("Test database dropped successfully.");
-                    if (err) return reject(err);
-                    resolve();
-                })
-        } else {
+        if (process.env.NODE_ENV !== 'test') {
             mongoose.connect(DB, {
-                useFindAndModify: true,
+                useFindAndModify: false,
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
                 useCreateIndex: true,
+            }).then((res, err) => {
+                if (err) return reject(err);
+                resolve();
             })
-                .then((res, err) => {
-                    if (err) return reject(err);
-                    resolve();
-                })
         }
     });
 }
 
-function dbclose(){
+// genaral db close function
+function dbclose() {
     return mongoose.disconnect();
+}
+
+class MongoMemServer {
+
+    constructor() {
+        this.mongoServer = new MongoMemoryServer();
+    }
+    // start mongo memory server
+    async start() {
+        const URI = await this.mongoServer.getUri();
+        mongoose.connect(URI, {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useUnifiedTopology: true,
+        });
+    }
+    // stop mongo memory server
+    async stop(){
+        mongoose.disconnect();
+        await this.mongoServer.stop();
+    }
+    // clean all collections
+    async clean(){
+        const collections = await mongoose.connection.db.collections;
+        for (let collection of collections) {
+            await collection.deleteMany();
+        }
+    }
 }
 
 module.exports = {
     dbconnect,
-    dbclose
+    dbclose,
+    MongoMemServer
 }

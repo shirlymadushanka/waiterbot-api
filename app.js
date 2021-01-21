@@ -6,11 +6,13 @@ const { PORT } = require('./api/config');
 const db = require('./db/index')
 const app = express();
 const morgan = require('morgan');
+const Cors = require('cors');
 
 
 // third party middlewares
 app.use(bp.json())
-// app.use(morgan('dev'))
+app.use(morgan('dev'))
+app.use(Cors())
 
 app.get('/api', (req,res,next) => {
     res.status(200).json({
@@ -22,13 +24,12 @@ app.get('/api', (req,res,next) => {
 // adding routes of the application
 app.use('/api/auth',require('./api/routes/auth.routes'));
 
-// app level middleware. Check auth middleware.
-app.use(checkAuth);
+app.use('/api/admins',checkAuth,require('./api/routes/admin.routes'));
+app.use('/api/owners',checkAuth,require('./api/routes/owner.routes'));
+app.use('/api/clients',checkAuth,require('./api/routes/client.routes'));
+app.use('/api/operators',checkAuth,require('./api/routes/operator.routes'));
 
-app.use('/api/admins',require('./api/routes/admin.routes'));
-app.use('/api/owners',require('./api/routes/owner.routes'));
-app.use('/api/clients',require('./api/routes/client.routes'));
-app.use('/api/operators',require('./api/routes/operator.routes'));
+app.use('/api/properties',checkAuth,require('./api/routes/properties.routes'));
 
 // handling not found routes.
 app.use((req,res,next)=>{
@@ -39,15 +40,16 @@ app.use((req,res,next)=>{
 
 // handling globle error.
 app.use((err,req,res,next)=>{
-    res.status(err.status || 500);
+    let status = err.error? 422 : 500;
+    res.status(err.status || status);
     res.json({
-        message : err.message,
-        success : false
+        message : err.error?err.error.message : err.message,
+        success : false,
+        data : {}
     });
 });
 
 // connect to the database and listen on port
-console.log("connecting to mongodb...");
 db.dbconnect().then(() => {
     app.listen(PORT, () => {
         console.log(`server started at port ${PORT}`);

@@ -1,0 +1,8 @@
+
+# api-welcome
+GET http://localhost:3000/api
+
+###
+
+# property endpoints
+GET http://localhost:3000/api/properties
