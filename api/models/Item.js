@@ -4,32 +4,6 @@ const Schema = mongoose.Schema;
 
 // Declare the Schema of the Mongo model
 
-var portion = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: Number,
-        required: true
-    },
-    note: {
-        type: String
-    }
-}
-);
-
-var ingredients = new Schema({
-    name : {
-        type : String,
-        required : true
-    },
-    qty : {
-        type : String,
-        required : true
-    }
-});
-
 var itemSchema = new Schema({
     name: {
         type: String,
@@ -39,30 +13,75 @@ var itemSchema = new Schema({
         type: String,
         required: true
     },
-    category :{ 
+    category: {
         type: String,
-        required : true
+        required: true
     },
-    property :{ 
+    property: {
         type: mongoose.Types.ObjectId,
-        ref : 'Property'
+        ref: 'Property'
     },
-    portions : [portion],
-    review_count : {
-        type : Number,
-        default : 0
+    portions: [
+        {
+            name: {
+                type: String,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            },
+            note: {
+                type: String
+            }
+        }
+    ],
+    review_count: {
+        type: Number,
+        default: 0
     },
-    review : {
-        type : mongoose.Types.ObjectId,
-        ref : "ItemReview"
+    stars: {
+        type: Number,
+        default: 0
     },
-    ingredients : [ingredients]
+    ingredients: [{
+        name: {
+            type: String,
+            required: true
+        },
+        qty: {
+            type: String,
+            required: true
+        }
+    }],
+    status: {
+        type: String,
+        enum: ['available', 'sold-out'],
+        default: 'available'
+    },
+    imgUrl: {
+        key: {
+            type: String,
+            default: null
+        },
+        location: {
+            type: String,
+            default: "https://via.placeholder.com/500?text=Image%20not%20available"
+        }
+    }
 
 },
     {
         timestamps: true
     }
 );
+
+// post remove callback
+// ? Here we have to remove all related documents of that item. All the comments, ratings, past orders etc.
+
+itemSchema.post('remove', async function (doc) {
+    // TODO remove all related documents here...
+});
 
 //Export the model
 module.exports = mongoose.model('Item', itemSchema);

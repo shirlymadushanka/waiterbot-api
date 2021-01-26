@@ -1,14 +1,16 @@
 const express = require('express');
 const PropertyController = require('../controllers/PropertyController');
+const ItemController = require('../controllers/ItemController');
 const router = express.Router();
 const checkRole = require('../middlewares/checkRole');
 const checkProperty = require('../middlewares/checkProperty');
 const { uploader } = require('../middlewares/fileUpload');
 const validator = require('express-joi-validation').createValidator({ passError: true });
-const { propertySchema, editPropertySchema, itemSchema } = require('../utils/Validator');
+const schema = require('../utils/Validator');
 
 
-// all routes begin with /api/properties goes here..
+
+// ?    all routes begin with /api/properties goes here..
 
 // get properties
 router.get('/', PropertyController.readProperty);
@@ -20,7 +22,7 @@ router.get('/:propId', PropertyController.readProperty);
 router.post(
     '/', 
     checkRole(["admin"]), 
-    validator.body(propertySchema), 
+    validator.body(schema.propertySchema), 
     PropertyController.createProperty
 );
 
@@ -28,7 +30,8 @@ router.post(
 router.patch(
     '/:propId', 
     checkRole(["owner"]), 
-    validator.body(editPropertySchema), 
+    checkProperty,
+    validator.body(schema.editPropertySchema), 
     PropertyController.updateProperty
 );
 
@@ -58,9 +61,20 @@ router.delete(
 );
 
 // add items to a property
-router.post('/:propId/items', validator.body(itemSchema), (req, res, next) => {
-    res.json(req.body);
-})
+router.post(
+    '/:propId/items',
+    checkRole(["owner"]), 
+    checkProperty, 
+    validator.body(schema.itemSchema), 
+    ItemController.createItem
+);
+
+// read registed items in the property
+router.get(
+    '/:propId/items', 
+    checkProperty,
+    ItemController.readItemByPropId
+);
 
 
 

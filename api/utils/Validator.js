@@ -17,7 +17,7 @@ const authSchema = Joi.object({
 
 // property data input validator schema
 const propertySchema = Joi.object({
-    owner : Joi.objectId().required(),
+    owner: Joi.objectId().required(),
     name: Joi.string().required(),
     description: Joi.string().required(),
     address: Joi.string().required(),
@@ -48,13 +48,29 @@ const itemSchema = Joi.object({
         price: Joi.number()
             .required(),
         note: Joi.string()
-    }),
-    ingredients : Joi.array().items({
+    }).min(1).required(),
+    ingredients: Joi.array().items({
         name: Joi.string()
             .required(),
-        qty: Joi.number()
+        qty: Joi.string()
             .required()
-    })
+    }).min(1).required()
+
+});
+
+const editItemSchema = Joi.object({
+    name: Joi.string(),
+    description: Joi.string(),
+    category: Joi.string(),
+    portions: Joi.array().items({
+        name: Joi.string(),
+        price: Joi.number(),
+        note: Joi.string()
+    }).min(1),
+    ingredients: Joi.array().items({
+        name: Joi.string(),
+        qty: Joi.string()
+    }).min(1)
 
 });
 
@@ -63,5 +79,6 @@ module.exports = {
     authSchema,
     propertySchema,
     editPropertySchema,
-    itemSchema
+    itemSchema,
+    editItemSchema
 }

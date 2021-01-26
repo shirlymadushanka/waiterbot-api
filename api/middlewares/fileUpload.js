@@ -21,11 +21,14 @@ var uploader = multer({
     },
     key: function (req, file, cb) {
       let base = "";
+      console.log(req.baseUrl);
       switch (req.baseUrl) {
         case "/api/properties":
           base = `${req.user.user_id}/properties/${req.params.propId}`;
           break;
-      
+        case "/api/items":
+          base = `${req.user.user_id}/items/${req.params.itemId}`;
+          break;
         default:
           var now = Date.now().toString();
           base = `${req.user.user_id}/${now}`

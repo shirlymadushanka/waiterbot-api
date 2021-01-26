@@ -1,5 +1,4 @@
 const createErrors = require('http-errors');
-const Owner = require('../models/Owner');
 const Property = require("../models/Property");
 const { s3Config } = require('../middlewares/fileUpload');
 
@@ -144,8 +143,6 @@ const removeImage = async (req, res, next) => {
             { _id: req.params.propId, owner: req.user.user_id },
             { imgUrl: resettedImageProps });
         if (property === null) throw new Error("Something went wrong!");
-
-        console.log(property.imgUrl.key);
         // delete file from S3 bucket
         s3Config.deleteObject({
             Bucket: process.env.AWS_BUCKET_NAME,
@@ -167,6 +164,8 @@ const removeImage = async (req, res, next) => {
 
 // helper function
 const serializedProperty = (prop) => {
+    if (prop === null) return {};
+    
     return {
         "_id": prop._id,
         "name": prop.name,

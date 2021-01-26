@@ -30,6 +30,7 @@ app.use('/api/clients',checkAuth,require('./api/routes/client.routes'));
 app.use('/api/operators',checkAuth,require('./api/routes/operator.routes'));
 
 app.use('/api/properties',checkAuth,require('./api/routes/properties.routes'));
+app.use('/api/items',checkAuth,require('./api/routes/item.routes'));
 
 // handling not found routes.
 app.use((req,res,next)=>{

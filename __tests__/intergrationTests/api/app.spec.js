@@ -10,7 +10,7 @@ describe('Api up and running', () => {
     expect(response.status).toBe(200);
   });
 
-  it('should respond with 404 with unknown routes', async () => {
+  it('Should respond with 404 with unknown routes', async () => {
     const response = await request(app)
       .get('/api/unknown');
     expect(response.status).toBe(404);
