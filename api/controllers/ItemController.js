@@ -2,6 +2,7 @@ const createHttpError = require('http-errors');
 const Item = require('../models/Item');
 const { s3Config } = require('../middlewares/fileUpload');
 
+
 // Create Item
 const createItem = async (req, res, next) => {
     try {
@@ -132,7 +133,21 @@ const removeImage = async (req, res, next) => {
     }
 }
 
+const setAvailability = async ( req, res, next ) => {
+    try {
+        let status = req.body.available ? "available" : "sold-out";
+        await Item.findByIdAndUpdate(req.params.itemId,{ status });
+        res.status(200).json({
+            success: true,
+            message: "Item state has been changed successfully.",
+            data: req.body
+        });
+    } catch (error) {
+       next(error); 
+    }
+}
 
+// helper function
 const serializedItem = (item) => {
     if(item===null) return {};
     return {
@@ -149,5 +164,6 @@ module.exports = {
     updateItem,
     deleteItem,
     addImage,
-    removeImage
+    removeImage,
+    setAvailability
 }

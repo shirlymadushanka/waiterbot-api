@@ -7,6 +7,7 @@ const Admin = require('../models/Admin');
 const Operator = require('../models/Operator');
 const Client = require('../models/Client');
 const UserBase = require('../models/UserBase');
+const Property = require('../models/Property');
 
 const userRegister = async (role, req, res, next) => {
     try {
@@ -33,6 +34,11 @@ const userRegister = async (role, req, res, next) => {
                 role
             });
         }else if (role === "operator"){
+            // check user enters correct property id for operator registration.
+            const properties = await Property.find({ owner : req.user.user_id},"_id");
+            if(! properties.some(prop => prop._id.toString() === req.body.work_on)){
+                throw createErrors.NotFound("This property is not found!");
+            }
             newUser = Operator({
                 ...req.body,
                 password,

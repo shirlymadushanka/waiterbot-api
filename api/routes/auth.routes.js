@@ -3,7 +3,8 @@ const router = express.Router();
 const validator = require('express-joi-validation').createValidator({passError: true});
 const { userRegister, userLogin, getAuthUser } = require('../controllers/AuthController');
 const checkAuth = require('../middlewares/checkAuth');
-const {authSchema, registerInputSchema } = require('../utils/Validator');
+const checkRole = require('../middlewares/checkRole');
+const {authSchema, registerInputSchema,operatorRegisterInputSchema } = require('../utils/Validator');
 
 
 // Admin registration
@@ -18,7 +19,7 @@ router.post('/admin_login',validator.body(authSchema),async (req,res,next)=>{
 
 
 // owner registration
-router.post('/owner_register',validator.body(registerInputSchema), async (req, res,next) => {
+router.post('/owner_register',checkAuth,checkRole(["admin"]),validator.body(registerInputSchema), async (req, res,next) => {
     await userRegister("owner",req,res,next);
 });
 
@@ -28,7 +29,7 @@ router.post('/owner_login',validator.body(authSchema),async (req,res,next)=>{
 });
 
 // operator registration
-router.post('/operator_register',validator.body(registerInputSchema), async (req, res,next) => {
+router.post('/operator_register',checkAuth,checkRole(["owner"]),validator.body(operatorRegisterInputSchema), async (req, res,next) => {
     await userRegister("operator",req,res,next);
 });
 

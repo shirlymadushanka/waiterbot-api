@@ -8,6 +8,14 @@ const registerInputSchema = Joi.object({
     mobile: Joi.string().pattern(/^(07)\d{8}$/).required(),
     password: Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).required()
 });
+// operator register schema
+const operatorRegisterInputSchema = Joi.object({
+    work_on : Joi.objectId().required(),
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    mobile: Joi.string().pattern(/^(07)\d{8}$/).required(),
+    password: Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).required()
+});
 
 // auth data input validator schema
 const authSchema = Joi.object({
@@ -76,6 +84,7 @@ const editItemSchema = Joi.object({
 
 module.exports = {
     registerInputSchema,
+    operatorRegisterInputSchema,
     authSchema,
     propertySchema,
     editPropertySchema,
