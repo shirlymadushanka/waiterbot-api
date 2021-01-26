@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const ItemController = require('../controllers/ItemController');
+const ReviewController = require('../controllers/ReviewController');
 const validator = require('express-joi-validation').createValidator({ passError: true });
 const schema = require('../utils/Validator');
 const checkRole = require('../middlewares/checkRole');
 const checkItem = require('../middlewares/checkItem');
+const filterID = require('../middlewares/filterID');
 const { uploader } = require('../middlewares/fileUpload');
 const Joi = require('joi-oid');
 
@@ -57,6 +59,21 @@ router.patch(
         available: Joi.boolean().strict().required(),
     })),
     ItemController.setAvailability
+);
+
+// add item reviews
+router.post(
+    '/:itemId/reviews',
+    filterID,
+    validator.body(schema.reviewSchema),
+    ReviewController.createItemReview
+);
+
+// get all reviews
+router.get(
+    '/:itemId/reviews',
+    filterID,
+    ReviewController.getReviewByItem
 );
 
 module.exports = router;

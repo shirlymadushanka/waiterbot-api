@@ -32,6 +32,7 @@ app.use('/api/operators',checkAuth,require('./api/routes/operator.routes'));
 app.use('/api/properties',checkAuth,require('./api/routes/properties.routes'));
 app.use('/api/items',checkAuth,require('./api/routes/item.routes'));
 app.use('/api/robots',checkAuth,require('./api/routes/robot.routes'));
+app.use('/api/foodreviews',checkAuth,require('./api/routes/itemReview.routes'));
 
 // handling not found routes.
 app.use((req,res,next)=>{
