@@ -1,5 +1,4 @@
 const Joi = require('joi-oid');
-const mongoose = require('mongoose');
 
 // user input validator schema
 const registerInputSchema = Joi.object({
@@ -35,6 +34,7 @@ const propertySchema = Joi.object({
         coordinates: Joi.array()
     })
 });
+// edit property data input validator schema
 const editPropertySchema = Joi.object({
     name: Joi.string(),
     description: Joi.string(),
@@ -46,6 +46,7 @@ const editPropertySchema = Joi.object({
     })
 });
 
+// item data input validator schema
 const itemSchema = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
@@ -66,6 +67,7 @@ const itemSchema = Joi.object({
 
 });
 
+// edit item data input validator schema
 const editItemSchema = Joi.object({
     name: Joi.string(),
     description: Joi.string(),
@@ -82,6 +84,16 @@ const editItemSchema = Joi.object({
 
 });
 
+// robot data validator schema
+const robotSchema = Joi.object({
+    property : Joi.objectId().required()
+});
+
+// edit robot data validator schema
+const editRobotSchema = Joi.object({
+    status :  Joi.string().valid('Idle','Assigned','Delivering','Delivered').required() 
+});
+
 module.exports = {
     registerInputSchema,
     operatorRegisterInputSchema,
@@ -89,5 +101,7 @@ module.exports = {
     propertySchema,
     editPropertySchema,
     itemSchema,
-    editItemSchema
+    editItemSchema,
+    robotSchema,
+    editRobotSchema
 }

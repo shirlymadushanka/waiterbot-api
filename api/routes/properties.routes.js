@@ -1,12 +1,14 @@
 const express = require('express');
 const PropertyController = require('../controllers/PropertyController');
 const ItemController = require('../controllers/ItemController');
+const RobotController = require('../controllers/RobotController');
 const router = express.Router();
 const checkRole = require('../middlewares/checkRole');
 const checkProperty = require('../middlewares/checkProperty');
 const { uploader } = require('../middlewares/fileUpload');
 const validator = require('express-joi-validation').createValidator({ passError: true });
 const schema = require('../utils/Validator');
+const filterID = require('../middlewares/filterID');
 
 
 
@@ -71,12 +73,16 @@ router.post(
 
 // read registed items in the property
 router.get(
-    '/:propId/items', 
-    checkProperty,
+    '/:propId/items',
+    filterID,
     ItemController.readItemByPropId
 );
 
-
+router.get(
+    '/:propId/robots',
+    filterID,
+    RobotController.getRobotsByPropertyId
+);
 
 module.exports = router;
 

@@ -36,7 +36,7 @@ const readProperty = async (req, res, next) => {
                         owner : prop.owner
                     }
                 });
-            }else if(req.user.role === "admin") {
+            }else if(req.user.role === "owner") {
                 data = await Property.find({ owner : req.user.user_id});
                 data = data.map((prop) => serializedProperty(prop));    
             }else {
