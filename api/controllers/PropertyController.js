@@ -44,6 +44,7 @@ const readProperty = async (req, res, next) => {
             }
         } else {
             data = await Property.findById(req.params.propId).populate('owner', 'first_name last_name -_id');
+            if(data === null ) throw createErrors.NotFound("Property not found!");
             data = {
                 ...serializedProperty(data),
                 owner : data.owner

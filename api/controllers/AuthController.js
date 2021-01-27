@@ -88,7 +88,7 @@ const userLogin = async (role,req,res,next) => {
                 role: user.role
             },
             SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '7d' } 
         );
 
         let data = {

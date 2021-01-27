@@ -26,11 +26,11 @@
     "mongoose": "^5.10.11",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
-    "multer-s3": "^2.9.0"
+    "multer-s3": "^2.9.0",
+    "mongodb-memory-server": "^6.9.3"
   },
   "devDependencies": {
     "jest": "^26.6.3",
-    "mongodb-memory-server": "^6.9.3",
     "nodemon": "^2.0.6",
     "supertest": "^6.1.1"
   }
