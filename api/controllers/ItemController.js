@@ -54,7 +54,7 @@ const readItem = async (req, res, next) => {
 const readItemByPropId = async (req, res, next) => {
     try {
         const items = await Item.find({ property: req.params.propId });
-        res.status(201).json({
+        res.status(200).json({
             data: items.map(serializedItem),
             message: `Item fetched successfully.`,
             success: true

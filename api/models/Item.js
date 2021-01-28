@@ -10,8 +10,7 @@ var itemSchema = new Schema({
         required: true
     },
     description: {
-        type: String,
-        required: true
+        type: String
     },
     category: {
         type: String,
@@ -44,16 +43,7 @@ var itemSchema = new Schema({
         type: Number,
         default: 0
     },
-    ingredients: [{
-        name: {
-            type: String,
-            required: true
-        },
-        qty: {
-            type: String,
-            required: true
-        }
-    }],
+    ingredients: [String],
     status: {
         type: String,
         enum: ['available', 'sold-out'],

@@ -9,7 +9,7 @@ const registerInputSchema = Joi.object({
 });
 // operator register schema
 const operatorRegisterInputSchema = Joi.object({
-    work_on : Joi.objectId().required(),
+    work_on: Joi.objectId().required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
     mobile: Joi.string().pattern(/^(07)\d{8}$/).required(),
@@ -49,7 +49,7 @@ const editPropertySchema = Joi.object({
 // item data input validator schema
 const itemSchema = Joi.object({
     name: Joi.string().required(),
-    description: Joi.string().required(),
+    description: Joi.string(),
     category: Joi.string().required(),
     portions: Joi.array().items({
         name: Joi.string()
@@ -58,12 +58,7 @@ const itemSchema = Joi.object({
             .required(),
         note: Joi.string()
     }).min(1).required(),
-    ingredients: Joi.array().items({
-        name: Joi.string()
-            .required(),
-        qty: Joi.string()
-            .required()
-    }).min(1).required()
+    ingredients: Joi.array().items(Joi.string())
 
 });
 
@@ -77,47 +72,56 @@ const editItemSchema = Joi.object({
         price: Joi.number(),
         note: Joi.string()
     }).min(1),
-    ingredients: Joi.array().items({
-        name: Joi.string(),
-        qty: Joi.string()
-    }).min(1)
+    ingredients: Joi.array().items(Joi.string())
 
 });
 
 // robot data validator schema
 const robotSchema = Joi.object({
-    property : Joi.objectId().required()
+    property: Joi.objectId().required()
 });
 
 // edit robot data validator schema
 const editRobotSchema = Joi.object({
-    status :  Joi.string().valid('Idle','Assigned','Delivering','Delivered').required(),
-    table : Joi.objectId()
+    status: Joi.string().valid('Idle', 'Assigned', 'Delivering', 'Delivered').required(),
+    table: Joi.objectId()
 });
 
 // review data validator schema
 const reviewSchema = Joi.object({
-    stars : Joi.number().integer().strict().min(0).max(5).required(),
-    comment : Joi.string().required()
+    stars: Joi.number().integer().strict().min(0).max(5).required(),
+    comment: Joi.string().required()
 });
 
 // edit review data validator schema
 const editReviewSchema = Joi.object({
-    stars : Joi.number().integer().strict().min(0).max(5),
-    comment : Joi.string()
+    stars: Joi.number().integer().strict().min(0).max(5),
+    comment: Joi.string()
 });
 
 // Table data schema
 const tableSchema = Joi.object({
-    table_number : Joi.number().integer().strict().min(0).required(),
-    junction : Joi.number().integer().strict().min(0).required(),
-    turn_direction : Joi.string().valid('left','right').required()
+    table_number: Joi.number().integer().strict().min(0).required(),
+    junction: Joi.number().integer().strict().min(0).required(),
+    turn_direction: Joi.string().valid('left', 'right').required()
 });
 // Edit Table data schema
 const editTableSchema = Joi.object({
-    table_number : Joi.number().integer().strict().min(0),
-    junction : Joi.number().integer().strict().min(0),
-    turn_direction : Joi.string().valid('left','right')
+    table_number: Joi.number().integer().strict().min(0),
+    junction: Joi.number().integer().strict().min(0),
+    turn_direction: Joi.string().valid('left', 'right')
+});
+
+// Order data schema
+const orderSchema = Joi.object({
+    property: Joi.objectId().required(),
+    amount: Joi.number().required(),
+    table: Joi.objectId().required(),
+    items: Joi.array().items({
+        item : Joi.objectId().required(),
+        portion: Joi.objectId().required(),
+        qty: Joi.number().integer().strict().required()
+    }).min(1)
 });
 
 module.exports = {
@@ -133,5 +137,6 @@ module.exports = {
     reviewSchema,
     editReviewSchema,
     tableSchema,
-    editTableSchema
+    editTableSchema,
+    orderSchema
 }
