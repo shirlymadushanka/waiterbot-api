@@ -10,6 +10,10 @@ var robotSchema = new Schema({
         enum: ['Idle','Assigned','Delivering','Delivered'],
         default: 'Idle'
     },
+    table : {
+        type: mongoose.Types.ObjectId,
+        ref: 'Table'
+    },
     property: {
         type: mongoose.Types.ObjectId,
         ref: 'Property'

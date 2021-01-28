@@ -91,7 +91,8 @@ const robotSchema = Joi.object({
 
 // edit robot data validator schema
 const editRobotSchema = Joi.object({
-    status :  Joi.string().valid('Idle','Assigned','Delivering','Delivered').required() 
+    status :  Joi.string().valid('Idle','Assigned','Delivering','Delivered').required(),
+    table : Joi.objectId()
 });
 
 // review data validator schema
@@ -106,6 +107,19 @@ const editReviewSchema = Joi.object({
     comment : Joi.string()
 });
 
+// Table data schema
+const tableSchema = Joi.object({
+    table_number : Joi.number().integer().strict().min(0).required(),
+    junction : Joi.number().integer().strict().min(0).required(),
+    turn_direction : Joi.string().valid('left','right').required()
+});
+// Edit Table data schema
+const editTableSchema = Joi.object({
+    table_number : Joi.number().integer().strict().min(0),
+    junction : Joi.number().integer().strict().min(0),
+    turn_direction : Joi.string().valid('left','right')
+});
+
 module.exports = {
     registerInputSchema,
     operatorRegisterInputSchema,
@@ -117,5 +131,7 @@ module.exports = {
     robotSchema,
     editRobotSchema,
     reviewSchema,
-    editReviewSchema
+    editReviewSchema,
+    tableSchema,
+    editTableSchema
 }

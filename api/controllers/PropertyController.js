@@ -111,6 +111,7 @@ const deleteProperty = async (req, res, next) => {
 
 const addImage = async (req, res, next) => {
     try {
+        if(req.file === undefined ) throw createErrors.UnprocessableEntity("image required!")
         const property = await Property.findOneAndUpdate(
             { _id: req.params.propId, owner: req.user.user_id },
             {

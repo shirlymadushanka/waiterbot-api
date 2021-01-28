@@ -3,13 +3,19 @@ const router = express.Router();
 const validator = require('express-joi-validation').createValidator({ passError: true });
 const RobotController = require('../controllers/RobotController');
 const checkRole = require('../middlewares/checkRole');
+const filterID = require('../middlewares/filterID');
 const schema = require('../utils/Validator');
 
 // ?    all routes begin with /api/robots goes here..
 
 
 // get one robot
-router.get('/:robId', RobotController.readRobot);
+router.get(
+    '/:robId', 
+    checkRole(["owner","operator"]),
+    filterID,
+    RobotController.readRobot
+);
 
 
 // create properties
@@ -24,6 +30,7 @@ router.post(
 router.patch(
     '/:robId', 
     checkRole(["operator"]),
+    filterID,
     validator.body(schema.editRobotSchema), 
     RobotController.updateRobot
 );
@@ -32,6 +39,7 @@ router.patch(
 router.delete(
     '/:robId', 
     checkRole(["admin"]), 
+    filterID,
     RobotController.removeRobot
 );
 

@@ -85,6 +85,7 @@ const deleteItem = async (req, res, next) => {
 
 const addImage = async (req, res, next) => {
     try {
+        if(req.file === undefined ) throw createErrors.UnprocessableEntity("image required!");
         const item = await Item.findByIdAndUpdate(req.params.itemId, {
             imgUrl: {
                 key: req.file.key,

@@ -2,6 +2,7 @@ const express = require('express');
 const PropertyController = require('../controllers/PropertyController');
 const ItemController = require('../controllers/ItemController');
 const RobotController = require('../controllers/RobotController');
+const TableController = require('../controllers/TableController');
 const router = express.Router();
 const checkRole = require('../middlewares/checkRole');
 const checkProperty = require('../middlewares/checkProperty');
@@ -83,6 +84,44 @@ router.get(
     filterID,
     RobotController.getRobotsByPropertyId
 );
+
+// get tables of the property
+router.get(
+    '/:propId/tables',
+    checkRole(["owner","operator"]), 
+    checkProperty,
+    TableController.getTablesByPropertyId
+);
+
+// add tables to a property
+router.post(
+    '/:propId/tables',
+    checkRole(["owner"]), 
+    checkProperty,
+    filterID,
+    validator.body(schema.tableSchema), 
+    TableController.createTable
+);
+
+// edit table of a property
+router.patch(
+    '/:propId/tables/:tblId',
+    checkRole(["owner"]), 
+    checkProperty, 
+    filterID,
+    validator.body(schema.editTableSchema), 
+    TableController.updateTable
+);
+
+// delete table of a property
+router.delete(
+    '/:propId/tables/:tblId',
+    checkRole(["owner"]), 
+    checkProperty, 
+    filterID,
+    TableController.removeTable
+);
+
 
 module.exports = router;
 
