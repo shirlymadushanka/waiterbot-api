@@ -7,10 +7,14 @@ const Schema = mongoose.Schema;
 var orderSchema = new Schema({
     status : {
         type: String,
-        enum: ['Pending','Cancelled','Prepairing','Delivering','Delivered'],
+        enum: ['Pending','Cancelled','Preparing','Delivering','Delivered'],
         default: 'Pending'
     },
     property: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Property'
+    },
+    robot : {
         type: mongoose.Types.ObjectId,
         ref: 'Property'
     },

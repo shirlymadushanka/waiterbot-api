@@ -3,6 +3,7 @@ const PropertyController = require('../controllers/PropertyController');
 const ItemController = require('../controllers/ItemController');
 const RobotController = require('../controllers/RobotController');
 const TableController = require('../controllers/TableController');
+const OrderController = require('../controllers/OrderController');
 const router = express.Router();
 const checkRole = require('../middlewares/checkRole');
 const checkProperty = require('../middlewares/checkProperty');
@@ -10,6 +11,7 @@ const { uploader } = require('../middlewares/fileUpload');
 const validator = require('express-joi-validation').createValidator({ passError: true });
 const schema = require('../utils/Validator');
 const filterID = require('../middlewares/filterID');
+const Joi = require('joi-oid');
 
 
 
@@ -120,6 +122,20 @@ router.delete(
     checkProperty, 
     filterID,
     TableController.removeTable
+);
+
+// get all orders of a property
+router.get(
+    '/:propId/orders',
+    validator.query(
+        Joi.object({
+            status : Joi.string().valid('Pending','Cancelled','Preparing','Delivering','Delivered')
+        })
+    ), 
+    checkRole(["owner","operator"]), 
+    checkProperty, 
+    filterID,
+    OrderController.getOrdersByPropertyID
 );
 
 
