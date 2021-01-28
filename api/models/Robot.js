@@ -5,6 +5,9 @@ const Schema = mongoose.Schema;
 // Declare the Schema of the Mongo model
 
 var robotSchema = new Schema({
+    nickname : {
+        type : String,
+    },
     status : {
         type: String,
         enum: ['Idle','Assigned','Delivering','Delivered'],

@@ -11,8 +11,11 @@ const ObjectID = require('mongodb').ObjectID;
 const createRobot = async (req, res, next) => {
     try {
         const property = await Property.findById(req.body.property);
-        if( property === null ) throw createHttpError.NotFound("Property not found!")
+        if( property === null ) throw createHttpError.NotFound("Property not found!");
+        const robotCount = await Robot.countDocuments({ property : property._id });
+        var nickname = `ROBOT-${robotCount + 1}`;
         const robot =  new Robot({
+            nickname,
             ...req.body
         });
         await robot.save();
