@@ -9,12 +9,10 @@ const morgan = require('morgan');
 const Cors = require('cors');
 
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
 
-const jwt = require('jsonwebtoken');
-const { connection } = require('mongoose');
-const UserBase = require('./api/models/UserBase');
+const socketServer = require('./api/socketio/socketServer');
 
+socketServer.connect(http);
 
 // third party middlewares
 app.use(bp.json())
@@ -69,39 +67,6 @@ db.dbconnect().then(() => {
     console.log(`error connectiong to the database`);
 });
 
-// socket connections.
-io.use(async (socket, next) => {
-    try {
-        const token = socket.handshake.auth.token;
-        const decodedPayload = jwt.verify(token, process.env.SECRET);
-        socket.user = decodedPayload;
-        next();
-    } catch (error) {
-        next(new Error(error.message));
-    }
-
-});
-io.sockets.on('connection', async (socket) => {
-    
-    let user = socket.user;
-    const userDets = await UserBase.findById(user.user_id);
-    
-    if( user.role === "owner") {
-        socket.join("property:"+userDets.properties[0].toString());
-    }else if( user.role === "operator") {
-        socket.join("property:"+userDets.work_on.toString());
-    }
-    socket.join(userDets._id.toString());
-
-    socket.on('disconnet', () => {
-        console.log("Client disconnected!");
-    });
-});
-
-
-
-
 module.exports = {
-    app : http,
-    io
+    http
 };

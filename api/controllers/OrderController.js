@@ -4,6 +4,9 @@ const Table = require('../models/Table');
 const Property = require('../models/Property');
 const Operator = require('../models/Operator');
 
+const socketServer = require('../socketio/socketServer');
+
+
 
 const createOrder = async (req, res, next) => {
     try {
@@ -17,12 +20,15 @@ const createOrder = async (req, res, next) => {
             ...req.body
         });
         await order.save();
+        // emit new user message
+        socketServer.emitToRoom("property:" + req.body.property.toString(),"newOrder",order);
 
         res.status(201).json({
             data: order,
             message: `Order placed successfully.`,
             success: true
         });
+        
     } catch (error) {
         next(error);
     }   
@@ -87,6 +93,15 @@ const updateOrder = async (req, res, next) => {
         
         // change state
         const updated = await Order.findByIdAndUpdate(req.params.orderId,{ status : req.query.status }, { new : true });
+        const payloadToUser = {
+            order_id : updated._id,
+            property : updated.property,
+            status : updated.status
+        }
+        // emit changes to user
+        socketServer.emitToRoom(order.user.toString(),"orderStateChange",payloadToUser);
+        // emit changes to owner/operator
+        socketServer.emitToRoom("property:" + order.property.toString(),"orderStateChange",payloadToUser);
 
         res.status(200).json({
             data: updated,
