@@ -107,3 +107,4 @@ dist
 
 # package-lock
 package-lock.json
+socket_test.js
