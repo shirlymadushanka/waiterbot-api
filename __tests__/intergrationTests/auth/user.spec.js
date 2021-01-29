@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../../app');
+const { app } = require('../../../app');
 const { MongoMemServer } = require('../../../db');
 const User = require('../../../api/models/UserBase');
 
@@ -25,7 +25,7 @@ describe('Admin auth module', () => {
 
   // afterEach(() => memServer.clean());
 
-  it('should be able to create a user', async () => {
+  it('should be able to create a user', async (done) => {
 
     const response = await request(app)
       .post(registerEndPoint)
@@ -35,9 +35,10 @@ describe('Admin auth module', () => {
     let createdUser = await User.find({ mobile: payload.mobile });
     expect(createdUser.length).toBe(1);
     expect(createdUser[0].role).toEqual(role);
+    done();
   });
 
-  it('should not be able to create a user with same mobile number', async () => {
+  it('should not be able to create a user with same mobile number', async (done) => {
     const response = await request(app)
       .post(registerEndPoint)
       .send(payload);
@@ -46,9 +47,10 @@ describe('Admin auth module', () => {
     let createdUser = await User.find({ mobile: payload.mobile });
     // user count with still should be 1
     expect(createdUser.length).toBe(1);
+    done();
   });
 
-  it('should handle inputs on user register', async () => {
+  it('should handle inputs on user register', async (done) => {
     let { first_name, last_name, password } = payload;
 
     const response = await request(app)
@@ -59,9 +61,10 @@ describe('Admin auth module', () => {
         password
       });
     expect(response.status).toBe(422);
+    done();
   });
 
-  it('user should be able to login', async () => {
+  it('user should be able to login', async (done) => {
     const { password, mobile } = payload;
     const response = await request(app)
       .post(loginEndPoint)
@@ -71,21 +74,24 @@ describe('Admin auth module', () => {
       });
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("token");
+    done();
     token = response.body.token;
   })
 
-  it('public user should not be access protected routes', async () => {
+  it('public user should not be access protected routes', async (done) => {
     const response = await request(app)
       .get(roleProtectedRouteEndPoint);
     expect(response.status).not.toBe(200);
+    done();
   });
 
-  it('authorized user should be access protected routes', async () => {
+  it('authorized user should be access protected routes', async (done) => {
     var bearerToken = `Bearer ${token}`;
     const response = await request(app)
       .get(roleProtectedRouteEndPoint)
       .set({ "authorization": bearerToken });
     expect(response.status).toBe(200);
+    done();
   });
 
 });

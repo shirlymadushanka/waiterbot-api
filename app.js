@@ -101,4 +101,7 @@ io.sockets.on('connection', async (socket) => {
 
 
 
-module.exports = app;
+module.exports = {
+    app : http,
+    io
+};
