@@ -50,7 +50,7 @@ module.exports = {
     emit: function (event, values) {
         if (io) {
             io.sockets.emit(event, values);
-            console.log("[ EMITED ALL ]    ",+room.toString());
+            console.log("[ EMITED ALL ]    " + event.toString());
         } else {
             console.log("IO not defined!");
         }
@@ -59,7 +59,7 @@ module.exports = {
     emitToRoom: function (room, event, values) {
         if (io) {
             io.to(room.toString()).emit(event, values);
-            console.log("[ EMITED TO ROOM ]    ",+room.toString());
+            console.log("[ EMITED TO ROOM ]    "+room.toString());
         } else {
             console.log("IO not defined!");
         }
