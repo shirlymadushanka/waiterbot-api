@@ -28,17 +28,14 @@ module.exports = {
                 const userDets = await UserBase.findById(user.user_id);
 
                 if (user.role === "owner") {
-                    console.log(user.user_id + " joining to property:" + userDets.properties[0].toString());
                     socket.join("property:" + userDets.properties[0].toString());
                 } else if (user.role === "operator") {
-                    console.log(user.user_id + " joining to property:" + userDets.work_on.toString());
                     socket.join("property:" + userDets.work_on.toString());
                 }
-                console.log(user.user_id + " joining to own:" + userDets._id.toString());
+
                 socket.join(userDets._id.toString());
 
                 socket.emit('connection_success', "successfully connected!");
-                console.log(socket.rooms);
                 socket.emit('joined',[...socket.rooms]);
                 socket.on('disconnet', () => {
                     console.log("Client disconnected!");
