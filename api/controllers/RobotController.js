@@ -69,13 +69,14 @@ const updateRobot = async (req, res, next) => {
         if( table === null || user.work_on.toString() !== table.property.toString() ) throw createHttpError.NotFound("Table not found!");
         
         let tblID = req.body.status !== "Idle" ? req.body.table : null;
-        console.log(tblID);
 
         const robot = await Robot.findOneAndUpdate(
             { _id : req.params.robId, property : user.work_on },
             { status : req.body.status,table : tblID },
             { new : true });
         if(robot === null ) throw createHttpError.NotFound("Robot not found!");
+        // emit new user message
+        socketServer.emitToRoom("property:" + user.work_on.toString(),"robotStateChange",robot);
         
         res.status(200).json({
             data: robot,
