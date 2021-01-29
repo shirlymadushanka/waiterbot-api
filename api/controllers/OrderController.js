@@ -12,7 +12,7 @@ const createOrder = async (req, res, next) => {
     try {
         const property = await Property.findById(req.body.property);
         if( property === null ) throw createHttpError.NotFound("Property not found!");
-        const table = await Table.findOne({ _id : req.body.table, property : req.body.property });
+        const table = await Table.findOne({ _id : req.body.table, property : req.body.property },"_id table_number");
         if( table === null ) throw createHttpError.NotFound("Table not found!");
 
         const order = new Order({
@@ -20,10 +20,11 @@ const createOrder = async (req, res, next) => {
             ...req.body
         });
         await order.save();
+
         // emit new user message
-        socketServer.emitToRoom("property:" + property._id.toString(),"newOrder",order);
+        socketServer.emitToRoom("property:" + property._id.toString(),"newOrder",{...order._doc,table});
         res.status(201).json({
-            data: order,
+            data: {...order._doc,table},
             message: `Order placed successfully.`,
             success: true
         });
@@ -36,7 +37,7 @@ const createOrder = async (req, res, next) => {
 const readOrder = async (req, res, next) => {
     try {
        if( req.params.orderId === undefined ) throw createHttpError.NotFound("Order not found!");
-       const order = await Order.findById(req.params.orderId);
+       const order = await Order.findById(req.params.orderId).populate("table","_id table_number");
        res.status(200).json({
             data: order,
             message: `Order fetched successfully.`,
@@ -65,9 +66,9 @@ const getOrdersByPropertyID = async (req, res, next ) => {
     try {
         let orders;
         if( req.query.status === undefined ){
-            orders = await Order.find({ property : req.params.propId });
+            orders = await Order.find({ property : req.params.propId }).populate("table","_id table_number");
         }else{
-            orders = await Order.find({ property : req.params.propId,status : req.query.status });
+            orders = await Order.find({ property : req.params.propId,status : req.query.status }).populate("table","_id table_number");
         }
         res.status(200).json({
             data: orders,

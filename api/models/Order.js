@@ -52,10 +52,6 @@ var orderSchema = new Schema({
     }
 );
 
-orderSchema.post('save',(doc)=>{
-    console.log(doc);
-});
-
 
 //Export the model
 module.exports = mongoose.model('Order', orderSchema);
