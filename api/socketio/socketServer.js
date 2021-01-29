@@ -9,7 +9,11 @@ module.exports = {
     connect: function (server) {
         console.log("starting socket.io server...");
         try {
-            io = socketIO(server);
+            io = socketIO(server, {
+                cors: {
+                    origin: '*',
+                }
+            });
             io.use(async (socket, next) => {
                 try {
                     const token = socket.handshake.auth.token;
@@ -23,7 +27,7 @@ module.exports = {
 
             });
             io.sockets.on('connection', async (socket) => {
-                console.log("new connection from - "+socket.user.user_id); 
+                console.log("new connection from - " + socket.user.user_id);
                 let user = socket.user;
                 const userDets = await UserBase.findById(user.user_id);
 
@@ -36,7 +40,7 @@ module.exports = {
                 socket.join(userDets._id.toString());
 
                 socket.emit('connection_success', "successfully connected!");
-                socket.emit('joined',[...socket.rooms]);
+                socket.emit('joined', [...socket.rooms]);
                 socket.on('disconnet', () => {
                     console.log("Client disconnected!");
                 });
@@ -59,7 +63,7 @@ module.exports = {
     emitToRoom: function (room, event, values) {
         if (io) {
             io.to(room.toString()).emit(event, values);
-            console.log("[ EMITED TO ROOM ]    "+room.toString());
+            console.log("[ EMITED TO ROOM ]    " + room.toString());
         } else {
             console.log("IO not defined!");
         }
