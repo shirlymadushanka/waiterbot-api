@@ -15,9 +15,9 @@ const socketServer = require('./api/socketio/socketServer');
 socketServer.connect(http);
 
 // third party middlewares
-app.use(bp.json())
-app.use(morgan('dev'))
-app.use(Cors())
+app.use(bp.json());
+// app.use(morgan('dev'));
+app.use(Cors());
 
 app.get('/api', (req, res, next) => {
     res.status(200).json({

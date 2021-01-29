@@ -15,6 +15,7 @@ module.exports = {
                     const token = socket.handshake.auth.token;
                     const decodedPayload = jwt.verify(token, process.env.SECRET);
                     socket.user = decodedPayload;
+                    console.log(decodedPayload);
                     next();
                 } catch (error) {
                     next(new Error(error.message));
@@ -22,7 +23,7 @@ module.exports = {
 
             });
             io.sockets.on('connection', async (socket) => {
-                console.log("new connection from - "+socket.user.user_id);
+                console.log("new connection from - "+socket.user.user_id); 
                 let user = socket.user;
                 const userDets = await UserBase.findById(user.user_id);
 
@@ -37,7 +38,8 @@ module.exports = {
                 socket.join(userDets._id.toString());
 
                 socket.emit('connection_success', "successfully connected!");
-                socket.emit('joined',socket.rooms);
+                console.log(socket.rooms);
+                socket.emit('joined',[...socket.rooms]);
                 socket.on('disconnet', () => {
                     console.log("Client disconnected!");
                 });
@@ -51,6 +53,7 @@ module.exports = {
     emit: function (event, values) {
         if (io) {
             io.sockets.emit(event, values);
+            console.log("[ EMITED ALL ]    ",+room.toString());
         } else {
             console.log("IO not defined!");
         }
@@ -59,6 +62,7 @@ module.exports = {
     emitToRoom: function (room, event, values) {
         if (io) {
             io.to(room.toString()).emit(event, values);
+            console.log("[ EMITED TO ROOM ]    ",+room.toString());
         } else {
             console.log("IO not defined!");
         }

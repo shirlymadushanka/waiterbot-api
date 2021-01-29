@@ -22,7 +22,6 @@ const createOrder = async (req, res, next) => {
         await order.save();
         // emit new user message
         socketServer.emitToRoom("property:" + property._id.toString(),"newOrder",order);
-
         res.status(201).json({
             data: order,
             message: `Order placed successfully.`,
