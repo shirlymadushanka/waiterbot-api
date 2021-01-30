@@ -1,5 +1,6 @@
 const createErrors = require('http-errors');
 const Property = require("../models/Property");
+const Operator = require("../models/Operator");
 const { s3Config } = require('../middlewares/fileUpload');
 
 
@@ -39,8 +40,12 @@ const readProperty = async (req, res, next) => {
             }else if(req.user.role === "owner") {
                 data = await Property.find({ owner : req.user.user_id});
                 data = data.map((prop) => serializedProperty(prop));    
+            }else if(req.user.role === "operator") {
+                const user = await Operator.findById(req.user.user_id);
+                data = await Property.findById(user.work_on);
+                data = serializedProperty(data);
             }else {
-                data = {}
+                data = {};
             }
         } else {
             data = await Property.findById(req.params.propId).populate('owner', 'first_name last_name -_id');
