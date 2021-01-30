@@ -14,33 +14,32 @@ module.exports = {
                     origin: '*',
                 }
             });
+            
             io.use(async (socket, next) => {
                 try {
-                    const token = socket.handshake.auth.token;
+                    const token = socket.handshake.query.token;
                     const decodedPayload = jwt.verify(token, process.env.SECRET);
                     socket.user = decodedPayload;
-                    console.log(decodedPayload);
                     next();
                 } catch (error) {
-                    next(new Error(error.message));
+                    next(error);
                 }
-
             });
             io.sockets.on('connection', async (socket) => {
-                console.log("new connection from - " + socket.user.user_id);
-                let user = socket.user;
-                const userDets = await UserBase.findById(user.user_id);
+                console.log("new connection from - ",socket.user.user_id);
+                const user = await UserBase.findById(socket.user.user_id);
 
-                if (user.role === "owner") {
-                    socket.join("property:" + userDets.properties[0].toString());
-                } else if (user.role === "operator") {
-                    socket.join("property:" + userDets.work_on.toString());
+                if (user.role === "owner" ){
+                    socket.join("property:"+user.properties[0].toString());
+                } else if(user.role === "operator"){
+                    socket.join("property:"+user.work_on.toString());
+                    console.log(user.work_on);
                 }
 
-                socket.join(userDets._id.toString());
-
-                socket.emit('connection_success', "successfully connected!");
-                socket.emit('joined', [...socket.rooms]);
+                socket.join(socket.user.user_id,()=>{
+                    io.to(socket.user.user_id).emit("join",{ joined : socket.rooms });
+                });
+                // socket.emit("success");
                 socket.on('disconnet', () => {
                     console.log("Client disconnected!");
                 });
