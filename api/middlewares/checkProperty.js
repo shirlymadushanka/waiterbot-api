@@ -1,4 +1,5 @@
 const Property = require('../models/Property');
+const Operator = require('../models/Operator');
 const createHttpError = require('http-errors');
 const ObjectId = require('mongodb').ObjectID;
 
