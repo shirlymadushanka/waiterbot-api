@@ -1,9 +1,9 @@
 require('dotenv').config({ path: __dirname + '/.env' })
 const express = require('express');
+const mongoose = require("mongoose");
 const bp = require('body-parser');
 const checkAuth = require('./api/middlewares/checkAuth');
-const { PORT } = require('./api/config');
-const db = require('./db/index')
+const { PORT, DB } = require('./api/config');
 const app = express();
 const morgan = require('morgan');
 const Cors = require('cors');
@@ -58,14 +58,20 @@ app.use((err, req, res, next) => {
     });
 });
 
-// connect to the database and listen on port
-db.dbconnect().then(() => {
-    http.listen(PORT, () => {
-        console.log(`server started at port ${PORT}`);
-    })
-}).catch(() => {
-    console.log(`error connectiong to the database`);
-});
+if(process.env.NODE_ENV !== "test"){
+    // connect to mongodb and start listening on port
+    mongoose.connect(DB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+        })
+        .then(() => {
+            http.listen(PORT);
+            console.log(`Server is started at port ${PORT}`);
+        })
+        .catch((err) => console.log(err));
+
+}
 
 module.exports = {
     http

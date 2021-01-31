@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
 const createErrors = require('http-errors');
 const UserBase = require('../models/UserBase');
+const ObjectID = require('mongodb').ObjectID;
 
 module.exports = async (req, res, next) => {
     try {
@@ -11,6 +12,7 @@ module.exports = async (req, res, next) => {
         const token = req.headers.authorization.split(" ")[1];
         // verify and decode token
         const decodedPayload =  jwt.verify(token,SECRET);
+        if(!ObjectID.isValid(decodedPayload.user_id)) throw createErrors.Unauthorized("Unauthorized! Please login to proceed.");
         // set request body
         req.user = decodedPayload;
         // get user form the database

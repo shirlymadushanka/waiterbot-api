@@ -1,18 +1,30 @@
+process.env.NODE_ENV = "test";
+
 const request = require('supertest');
-const { MongoMemServer } = require('../../../db');
+const { http } = require('../../../app');
 
+describe('Property module', () => {
 
-describe('Property module',() => {
-    const memServer = new MongoMemServer();
-    beforeAll(() => memServer.start());
-
-    afterAll(() => memServer.stop());
-
-    // afterEach(() => memServer.clean());
-
-    it('should able to create new property to an owner', (done) => {
-        expect(true).toBe(true);
+    it('non-administrative users should not be able to create properties', async (done) => {
+        payload = {
+            owner: null,
+            name: "fake name",
+            description: "fake desc",
+            address: "fake address",
+            location: {
+                type: "Point",
+                coordinates: [
+                    -127.5,
+                    30.7
+                ]
+            }
+        }
+        const response = await request(http)
+            .post("/api/properties")
+            .send(payload);
+        expect(response.status).toBe(401);
+        expect(response.body.success).toBe(false);
         done();
-    })
+    });
 
 });

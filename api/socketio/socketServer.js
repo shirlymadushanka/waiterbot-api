@@ -7,7 +7,6 @@ var io = null;
 module.exports = {
 
     connect: function (server) {
-        console.log("starting socket.io server...");
         try {
             io = socketIO(server, {
                 cors: {
