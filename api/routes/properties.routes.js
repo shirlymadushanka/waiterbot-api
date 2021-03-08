@@ -5,6 +5,7 @@ const RobotController = require('../controllers/RobotController');
 const TableController = require('../controllers/TableController');
 const OrderController = require('../controllers/OrderController');
 const router = express.Router();
+const checkAuth = require('../middlewares/checkAuth');
 const checkRole = require('../middlewares/checkRole');
 const checkProperty = require('../middlewares/checkProperty');
 const { uploader } = require('../middlewares/fileUpload');
@@ -21,7 +22,14 @@ const Joi = require('joi-oid');
 router.get('/', PropertyController.readProperty);
 // get one property
 router.get('/:propId', PropertyController.readProperty);
+// read registed items in the property
+router.get(
+    '/:propId/items',
+    filterID,
+    ItemController.readItemByPropId
+);
 
+router.use(checkAuth);
 
 // create properties
 router.post(
@@ -72,13 +80,6 @@ router.post(
     checkProperty, 
     validator.body(schema.itemSchema), 
     ItemController.createItem
-);
-
-// read registed items in the property
-router.get(
-    '/:propId/items',
-    filterID,
-    ItemController.readItemByPropId
 );
 
 router.get(

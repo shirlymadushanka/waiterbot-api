@@ -4,6 +4,7 @@ const ItemController = require('../controllers/ItemController');
 const ReviewController = require('../controllers/ReviewController');
 const validator = require('express-joi-validation').createValidator({ passError: true });
 const schema = require('../utils/Validator');
+const checkAuth = require('../middlewares/checkAuth');
 const checkRole = require('../middlewares/checkRole');
 const checkItem = require('../middlewares/checkItem');
 const filterID = require('../middlewares/filterID');
@@ -14,7 +15,14 @@ const Joi = require('joi-oid');
 
 // get item by id
 router.get('/:itemId', ItemController.readItem);
+// get all reviews
+router.get(
+    '/:itemId/reviews',
+    filterID,
+    ReviewController.getReviewByItem
+);
 
+router.use(checkAuth);
 
 // edit item
 router.patch(
@@ -69,11 +77,5 @@ router.post(
     ReviewController.createItemReview
 );
 
-// get all reviews
-router.get(
-    '/:itemId/reviews',
-    filterID,
-    ReviewController.getReviewByItem
-);
 
 module.exports = router;
