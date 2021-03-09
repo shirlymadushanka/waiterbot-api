@@ -29,24 +29,13 @@ const readProperty = async (req, res, next) => {
     try {
         let data;
         if (req.params.propId === undefined) {
-            if (req.user.role === "admin") {
-                data = await Property.find({}).populate('owner', 'first_name last_name -_id');
-                data = data.map((prop)=>{
-                    return { 
-                        ...serializedProperty(prop),
-                        owner : prop.owner
-                    }
-                });
-            }else if(req.user.role === "owner") {
-                data = await Property.find({ owner : req.user.user_id});
-                data = data.map((prop) => serializedProperty(prop));    
-            }else if(req.user.role === "operator") {
-                const user = await Operator.findById(req.user.user_id);
-                data = await Property.findById(user.work_on);
-                data = serializedProperty(data);
-            }else {
-                data = {};
-            }
+            data = await Property.find({}).populate('owner', 'first_name last_name -_id');
+            data = data.map((prop)=>{
+                return { 
+                    ...serializedProperty(prop),
+                    owner : prop.owner
+                }
+            });
         } else {
             data = await Property.findById(req.params.propId).populate('owner', 'first_name last_name -_id');
             if(data === null ) throw createErrors.NotFound("Property not found!");
