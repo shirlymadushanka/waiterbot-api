@@ -16,7 +16,7 @@ const createOrder = async (req, res, next) => {
         if( table === null ) throw createHttpError.NotFound("Table not found!");
 
         const order = new Order({
-            user : req.user? req.user.user_id : null,
+            user : req.user !== undefined ? req.user.user_id : null,
             ...req.body
         });
         await order.save();

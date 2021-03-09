@@ -3,6 +3,7 @@ const router = express.Router();
 const validator = require('express-joi-validation').createValidator({ passError: true });
 const OrderController = require('../controllers/OrderController');
 const checkAuth = require('../middlewares/checkAuth');
+const allowGuest = require('../middlewares/allowGuest');
 const checkRole = require('../middlewares/checkRole');
 const filterID = require('../middlewares/filterID');
 const schema = require('../utils/Validator');
@@ -21,6 +22,7 @@ router.get(
 // create order
 router.post(
     '/',
+    allowGuest,
     validator.body(schema.orderSchema), 
     OrderController.createOrder
 );
