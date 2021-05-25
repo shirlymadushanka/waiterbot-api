@@ -20,6 +20,7 @@ const createOrder = async (req, res, next) => {
 
     const order = new Order({
       user: req.user !== undefined ? req.user.user_id : null,
+      robot: null,
       ...req.body,
     });
     await order.save();

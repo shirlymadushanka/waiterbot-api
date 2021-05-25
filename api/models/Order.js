@@ -16,7 +16,8 @@ var orderSchema = new Schema({
     },
     robot : {
         type: mongoose.Types.ObjectId,
-        ref: 'Property'
+        ref: 'Property',
+        default: null,
     },
     user : {
         type: mongoose.Types.ObjectId,
