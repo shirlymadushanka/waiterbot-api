@@ -13,6 +13,10 @@ var robotSchema = new Schema({
         enum: ['Idle','Assigned','Delivering','Delivered'],
         default: 'Idle'
     },
+    message : {
+        type: String,
+        default: 'Hello hoomon!'
+    },
     table : {
         type: mongoose.Types.ObjectId,
         ref: 'Table'

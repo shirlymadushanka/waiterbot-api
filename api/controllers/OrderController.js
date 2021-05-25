@@ -1,5 +1,6 @@
 const createHttpError = require("http-errors");
 const Order = require("../models/Order");
+const Robot = require("../models/Robot");
 const Table = require("../models/Table");
 const Property = require("../models/Property");
 const Operator = require("../models/Operator");
@@ -104,11 +105,15 @@ const updateOrder = async (req, res, next) => {
       throw createHttpError.BadRequest(
         `Can't change state to ${req.query.status}.`
       );
-
+    if(req.query.status === "Delivering") {
+      const user = await Operator.findById(req.user.user_id,'work_on');
+      const robot = await Robot.findOne({ _id : req.query.robotId, property : user.work_on });
+      if(!robot) throw createHttpError.NotFound("Robot not found!");
+    }
     // change state
     const updated = await Order.findByIdAndUpdate(
       req.params.orderId,
-      { status: req.query.status },
+      { status: req.query.status, robot: req.query.status === "Delivering" ? req.query.robotId : null },
       { new: true }
     );
     const payloadToUser = {

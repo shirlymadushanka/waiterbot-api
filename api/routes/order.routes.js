@@ -34,7 +34,12 @@ router.patch(
     '/:orderId',
     validator.query(
         Joi.object({
-            status : Joi.string().valid('Pending','Cancelled','Preparing','Delivering','Delivered').required()
+            status : Joi.string().valid('Pending','Cancelled','Preparing','Delivering','Delivered').required(),
+            robotId: Joi.when('status', {
+                is: "Delivering",
+                then: Joi.objectId().required(),
+                otherwise: Joi.optional()
+            }),
         })
     ),
     checkRole(["operator"]),
