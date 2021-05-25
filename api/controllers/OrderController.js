@@ -116,7 +116,8 @@ const updateOrder = async (req, res, next) => {
       req.params.orderId,
       { status: req.query.status, robot: req.query.status === "Delivering" ? req.query.robotId : null },
       { new: true }
-    );
+    ).populate("table", "_id table_number");
+
     const payloadToUser = {
       order_id: updated._id,
       property: updated.property,
